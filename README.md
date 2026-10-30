@@ -1,17 +1,17 @@
-# MR.TOM Instagram Growth Bot
+# MR.TOM Instagram Growth Agent
 
-A Python CLI for Instagram professional-account connection checks and follow-back analytics. Runs on Kali Linux and Android Termux.
+An interactive Python CLI for Kali Linux and Android Termux. It connects to an Instagram professional account through Meta's official Graph API (when configured) and analyzes locally exported follower/following lists.
 
-## What it does
-- Checks a connected Instagram professional account through Meta's Graph API.
-- Compares locally supplied follower/following CSV exports.
-- Produces a `non_followers_review.csv` list for manual review.
-- Keeps credentials in a local `.env` file (never commit it).
+## Menu
+- **1 — Connect/check Meta professional account:** checks the connected professional account using a Meta access token obtained through the official OAuth flow.
+- **2 — Target audience & follow-back manager:** asks for a target Instagram username, then compares your own locally supplied follower/following lists and creates review reports.
+- **3 — View generated reports:** checks whether report files exist.
+- **4 — Setup instructions.**
 
-## Important limitations
-This project does **not** automate follow/unfollow actions, scrape private follower lists, or collect Instagram passwords. Meta's official Instagram APIs do not provide a general-purpose endpoint for arbitrary follow/unfollow actions or unrestricted follower-list retrieval. Use Instagram's own data-download feature to obtain your account data, then prepare CSV files locally.
+## Important platform limits
+This tool does not request or store your Instagram password, scrape private or arbitrary target-account follower lists, or automate follow/unfollow actions. Meta's official Instagram APIs do not provide general-purpose follow/unfollow endpoints or unrestricted follower-list access. The target username is saved as analysis context only; it does not grant access to that account's followers. Review any suggested unfollow manually in Instagram.
 
-## Install: Kali Linux
+## Install on Kali Linux
 ```bash
 sudo apt update
 sudo apt install -y python3 python3-venv python3-pip git
@@ -23,7 +23,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Install: Android Termux
+## Install on Android Termux
 Install Termux from its official F-Droid or GitHub distribution, then:
 ```bash
 pkg update && pkg upgrade -y
@@ -36,27 +36,31 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Meta API connection
-1. Create/configure a Meta developer app and add the Instagram product/API use case appropriate to your professional account.
-2. Complete Meta's required account linking, permissions, and review steps.
-3. Obtain an access token using Meta's documented OAuth flow.
-4. Copy `.env.example` to `.env`, then fill in your token and Instagram professional account ID:
+## Use option 2
+1. Export/download your own Instagram account information using Instagram's official Accounts Center data-download process.
+2. Prepare:
+   - `data/followers.csv` — accounts following you.
+   - `data/following.csv` — accounts you follow.
+3. Each CSV should contain a `username` column (a one-column CSV or plain list of usernames also works).
+4. Run `python main.py`, choose option 2, and enter the target username.
+5. The tool creates:
+   - `data/non_followers_review.csv`
+   - `data/mutual_followers.csv`
+
+The non-followers report is a manual review list, not an automated unfollow queue.
+
+## Configure official Meta API access (option 1)
+1. Configure a Meta developer app and the Instagram API use case for your professional account.
+2. Complete the required account linking and permissions.
+3. Obtain an access token through Meta's documented OAuth flow.
+4. Copy and edit the environment file:
    ```bash
    cp .env.example .env
    nano .env
    ```
-5. Run `python main.py` and choose option 1.
+5. Set `META_ACCESS_TOKEN` and `IG_USER_ID`, then run option 1.
 
-Do not paste your password or access token into chats, issues, or public repositories.
+Never paste your password or access token into chats, issues, or public repositories. The `.env` file is ignored by Git.
 
-## Follow-back report
-Create these files:
-- `data/followers.csv`
-- `data/following.csv`
-
-Each can be a one-column CSV with header `username`, or a plain text file with one username per line. Put usernames without `@` (the parser also accepts `@`). Run option 2. The generated review file is `data/non_followers_review.csv`.
-
-## GitHub
-Repository: https://github.com/vijay-termux/mr-tom-instagram-growth-bot
-
-Never commit `.env` or exported personal account data.
+## Repository
+https://github.com/vijay-termux/mr-tom-instagram-growth-bot
